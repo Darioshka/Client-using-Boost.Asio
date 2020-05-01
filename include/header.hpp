@@ -31,7 +31,7 @@ struct talk_to_server {
 private:
     sock sock_;
     std::string username_;
-    
+
 public:
     explicit talk_to_server(const std::string &username) :
                             sock_(context), username_(username) {}
@@ -89,7 +89,7 @@ public:
     void action() {
         write("login " + username_ + "\n");
         read();
-        while(true) {
+        while (true) {
             write("ping \n");
             read();
             write("clients \n");

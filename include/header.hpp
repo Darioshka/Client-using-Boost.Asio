@@ -31,7 +31,7 @@ struct talk_to_server {
 private:
     sock sock_;
     std::string username_;
-	
+    
 public:
     explicit talk_to_server(const std::string &username) :
                             sock_(context), username_(username) {}
@@ -67,7 +67,7 @@ public:
     }
 
     void on_ping(const std::string &msg) {
-        if(msg == LIST_CHANED){
+        if (msg == LIST_CHANED){
             write(PING);
             read();
         }
@@ -89,13 +89,13 @@ public:
     void action() {
         write("login " + username_ + "\n");
         read();
-        srand(time(NULL));
         while(true) {
             write("ping \n");
             read();
             write("clients \n");
             read();
-            sleep(1+rand()%7);
+            unsigned r_time = time(nullptr);
+            sleep(1 + rand_r(&r_time) % 7);
         }
     }
 };
@@ -112,7 +112,7 @@ int main() {
     std::cin >> client_name;
     client_name = client_name.substr(0, client_name.length());
     std::thread th(boost::bind(run_client, client_name));
-    boost::this_thread::sleep( boost::posix_time::millisec(MS));
+    boost::this_thread::sleep(boost::posix_time::millisec(MS));
     th.join();
     return 0;
 }

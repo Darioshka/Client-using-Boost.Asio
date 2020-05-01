@@ -7,11 +7,16 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <stdio.h>
+#include <ctime>
+#include <string>
+
 #define PORT_NUM 8001
 #define MS 100
 
 const char STR[] = "127.0.0.1";
 const char CONNECTED[] = "client connected ";
+const char LIST_CHANED[] = "client list chaned\n";
+const char PING[] = "ping \n";
 
 using std::thread;
 using std::exception;
@@ -26,8 +31,10 @@ struct talk_to_server {
 private:
     sock sock_;
     std::string username_;
+	
 public:
-    talk_to_server(const std::string &username) : sock_(context), username_(username) {}
+    explicit talk_to_server(const std::string &username) :
+                            sock_(context), username_(username) {}
     sock &my_socket() { return sock_; }
     std::string get_username() {
         return username_;
@@ -53,7 +60,6 @@ public:
                            std::istreambuf_iterator<char>{});
 
         process_request(answer);
-
     }
 
     void on_login(const std::string msg) {
@@ -61,6 +67,10 @@ public:
     }
 
     void on_ping(const std::string &msg) {
+        if(msg == LIST_CHANED){
+            write(PING);
+            read();
+        }
             std::cout << msg << std::endl;
     }
 
@@ -79,12 +89,13 @@ public:
     void action() {
         write("login " + username_ + "\n");
         read();
-        while(true){
+        srand(time(NULL));
+        while(true) {
             write("ping \n");
             read();
             write("clients \n");
             read();
-            getchar();
+            sleep(1+rand()%7);
         }
     }
 };
@@ -94,6 +105,16 @@ void run_client(const std::string & client_name){
     talk_to_server client(client_name);
     client.connect(ep);
     client.action();
+}
+
+int main() {
+    std::string client_name;
+    std::cin >> client_name;
+    client_name = client_name.substr(0, client_name.length());
+    std::thread th(boost::bind(run_client, client_name));
+    boost::this_thread::sleep( boost::posix_time::millisec(MS));
+    th.join();
+    return 0;
 }
 
 #endif // INCLUDE_HEADER_HPP_

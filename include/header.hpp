@@ -31,7 +31,6 @@ using acceptor = boost::asio::ip::tcp::acceptor;
 using endpoint = boost::asio::ip::tcp::endpoint;
 using input_ip = boost::asio::ip::address;
 using io_context = boost::asio::io_context;
-using int64_t;
 io_context context;
 
 struct talk_to_server {
@@ -50,7 +49,6 @@ public:
     void on_ping(const std::string &msg);
     void on_client(const std::string &msg);
     void process_request(std::string answ);
-    void action() ;
+    void action();
 };
-
 #endif // INCLUDE_HEADER_HPP_

@@ -31,6 +31,7 @@ using acceptor = boost::asio::ip::tcp::acceptor;
 using endpoint = boost::asio::ip::tcp::endpoint;
 using input_ip = boost::asio::ip::address;
 using io_context = boost::asio::io_context;
+using int64_t;
 io_context context;
 
 struct talk_to_server {
